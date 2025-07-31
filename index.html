@@ -1,10 +1,17 @@
 <!DOCTYPE html>
+<!--
+  Este é um site mágico que exibe "Olá, Mundo!" com partículas animadas.
+  Feito por Petreos.
+-->
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Olá, Mundo! Mágico</title>
   <style>
+    /*
+      Estilos gerais do body para centralizar o conteúdo e criar um fundo gradiente escuro.
+    */
     body {
       background: linear-gradient(135deg, #1a1a2e, #16213e 80%);
       min-height: 100vh;
@@ -15,6 +22,9 @@
       justify-content: center;
       overflow: hidden;
     }
+    /*
+      Estilo do texto mágico: grande, branco, com brilho animado.
+    */
     .magic-text {
       font-size: 3rem;
       color: #fff;
@@ -24,6 +34,9 @@
       z-index: 1;
       animation: glow 2s infinite alternate;
     }
+    /*
+      Animação de brilho do texto.
+    */
     @keyframes glow {
       from {
         text-shadow: 0 0 10px #00f2fe, 0 0 20px #4facfe, 0 0 30px #00f2fe;
@@ -32,6 +45,9 @@
         text-shadow: 0 0 30px #00f2fe, 0 0 60px #4facfe, 0 0 90px #00f2fe;
       }
     }
+    /*
+      O canvas cobre toda a tela e serve para desenhar as partículas mágicas.
+    */
     canvas {
       position: absolute;
       top: 0;
@@ -44,17 +60,21 @@
   </style>
 </head>
 <body>
+  <!-- Canvas para as partículas mágicas -->
   <canvas id="magic-canvas"></canvas>
+  <!-- Texto centralizado com efeito mágico -->
   <div class="magic-text">Olá, Mundo!</div>
   <script>
-    // Partículas mágicas
+    // Seleciona o canvas e define o contexto 2D
     const canvas = document.getElementById('magic-canvas');
     const ctx = canvas.getContext('2d');
+    // Define largura e altura iniciais do canvas
     let width = window.innerWidth;
     let height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
 
+    // Atualiza o tamanho do canvas ao redimensionar a janela
     function resize() {
       width = window.innerWidth;
       height = window.innerHeight;
@@ -63,38 +83,46 @@
     }
     window.addEventListener('resize', resize);
 
+    // Cores possíveis para as partículas
     const colors = ['#00f2fe', '#4facfe', '#43e97b', '#38f9d7', '#f7971e', '#ffd200'];
+    // Retorna uma cor aleatória do array
     function randomColor() {
       return colors[Math.floor(Math.random() * colors.length)];
     }
 
+    // Retorna um número aleatório entre a e b
     function randomBetween(a, b) {
       return a + Math.random() * (b - a);
     }
 
+    // Classe que representa uma partícula mágica
     class Particle {
       constructor() {
-        this.reset();
+        this.reset(); // Inicializa a partícula
       }
+      // Define propriedades aleatórias para a partícula
       reset() {
-        this.x = randomBetween(0, width);
-        this.y = randomBetween(height * 0.3, height * 0.7);
-        this.radius = randomBetween(2, 6);
-        this.color = randomColor();
-        this.alpha = randomBetween(0.5, 1);
-        this.speed = randomBetween(0.5, 2);
-        this.angle = randomBetween(0, 2 * Math.PI);
-        this.drift = randomBetween(-0.5, 0.5);
+        this.x = randomBetween(0, width); // Posição X
+        this.y = randomBetween(height * 0.3, height * 0.7); // Posição Y
+        this.radius = randomBetween(2, 6); // Tamanho
+        this.color = randomColor(); // Cor
+        this.alpha = randomBetween(0.5, 1); // Transparência
+        this.speed = randomBetween(0.5, 2); // Velocidade
+        this.angle = randomBetween(0, 2 * Math.PI); // Direção
+        this.drift = randomBetween(-0.5, 0.5); // Desvio lateral
       }
+      // Atualiza a posição e transparência da partícula
       update() {
         this.x += Math.cos(this.angle) * this.speed + this.drift;
         this.y += Math.sin(this.angle) * this.speed * 0.3;
         this.alpha -= 0.003;
+        // Se sair da tela ou ficar quase invisível, reinicia
         if (this.alpha <= 0.1 || this.x < 0 || this.x > width || this.y < 0 || this.y > height) {
           this.reset();
           this.y = randomBetween(height * 0.3, height * 0.7);
         }
       }
+      // Desenha a partícula no canvas
       draw(ctx) {
         ctx.save();
         ctx.globalAlpha = this.alpha;
@@ -108,20 +136,22 @@
       }
     }
 
+    // Cria várias partículas mágicas
     const particles = [];
     for (let i = 0; i < 80; i++) {
       particles.push(new Particle());
     }
 
+    // Função de animação: atualiza e desenha todas as partículas
     function animate() {
-      ctx.clearRect(0, 0, width, height);
+      ctx.clearRect(0, 0, width, height); // Limpa o canvas
       for (const p of particles) {
         p.update();
         p.draw(ctx);
       }
-      requestAnimationFrame(animate);
+      requestAnimationFrame(animate); // Chama novamente para animar
     }
-    animate();
+    animate(); // Inicia a animação
   </script>
 </body>
 </html>
